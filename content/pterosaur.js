@@ -1521,16 +1521,27 @@ function cleanupPterosaur() {
         }
         borrowed.mappings.add(
             [borrowed.modes.VIM_INSERT],
-            ["<Esc>", "<C-[>"],
+            ["<C-[>"],
             ["Handle escape key"],
             function(){
-              if (vimMode === "n" || lastKey === ESC)
-              {
-                borrowed.modes.reset();
-              }
-              else {
+              //if (vimMode === "n" || lastKey === ESC)
+              //{
+                //borrowed.modes.reset();
+              //}
+              //else {
                 queueForVim(ESC);
-              }
+              //}
+            });
+
+        borrowed.mappings.add(
+            [borrowed.modes.VIM_INSERT],
+            ["<C-x>"],
+            ["Exit"],
+            function(){
+              //if (vimMode === "n" || lastKey === ESC)
+              //{
+                borrowed.modes.reset();
+              //}
             });
 
         borrowed.mappings.add(
@@ -1566,7 +1577,10 @@ function cleanupPterosaur() {
             [borrowed.modes.VIM_INSERT],
             ["<Return>"],
             ["Override websites' carriage return behavior"],
-            function(){return specialKeyHandler("<Return>");});
+            function(){
+              queueForVim("\r");
+            },
+            {noTransaction: true});
     }
     else {
         borrowed.mappings.remove( borrowed.modes.VIM_INSERT, "<Esc>");
@@ -1666,6 +1680,7 @@ function startVimbed() {
       arguments: function(){
         var toCall = ["--servername", "pterosaur_" + uid,
                       "-s", "/dev/null",
+                      "--cmd", "let g:pterosaur = 1",
                       "-S", vimbedFile.path];
 
 
